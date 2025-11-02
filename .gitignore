@@ -1,0 +1,9 @@
+.env
+node_modules/
+rewards.db
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+*.swp
