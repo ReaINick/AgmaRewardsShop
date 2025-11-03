@@ -45,10 +45,12 @@ class StreamerbotManager {
       }
     });
 
-    this.client.on('error', (err) => {
-      console.error('Streamer.bot error:', err);
-    });
-  }
+// Don't crash if Streamer.bot isn't available (e.g., on hosted environments)
+client.on('error', (err) => {
+  console.error('⚠️ Streamer.bot connection error (this is expected on hosted servers):', err.message);
+  isConnected = false;
+});
+
 
   syncUserPoints(username, points) {
     db.run(`INSERT INTO users (username, points, total_earned) 
@@ -131,3 +133,4 @@ class StreamerbotManager {
 }
 
 module.exports = new StreamerbotManager();
+
