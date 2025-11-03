@@ -10,7 +10,7 @@ const db = require('./database');
 const streamerbot = require('./streamerbot');
 
 const app = express();
-const PORT = process.env.SERVER_PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(bodyParser.json());
@@ -405,9 +405,13 @@ app.post('/api/admin/reject', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`\n🎮 Agma Rewards Shop running on http://localhost:${PORT}`);
-  console.log(`📊 Admin panel: http://localhost:${PORT}/admin.html`);
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`\n🎮 Agma Rewards Shop running on port ${PORT}`);
+  console.log(`📊 Admin panel available at /admin.html`);
   console.log(`🔐 OAuth ready with YouTube authentication`);
-  console.log(`⚠️  Make sure Streamer.bot is running!\n`);
+  console.log(`⚠️ Streamer.bot WebSocket connection may not work on hosted environments\n`);
 });
+
+
