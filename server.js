@@ -20,6 +20,7 @@ const CALLBACK_URL = process.env.NODE_ENV === 'production'
 
 // Middleware
 app.use(bodyParser.json());
+app.get('/', (req, res) => res.sendFile(__dirname + '/public/shop.html'));
 app.use(express.static('public'));
 
 // Session configuration
@@ -445,3 +446,4 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`🔐 OAuth ready with YouTube authentication`);
   console.log(`🤖 Streamer.bot sync endpoint: POST /api/streamerbot/update-points\n`);
 });
+
