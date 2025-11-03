@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agma Rewards Shop</title>
+    <link rel="stylesheet" href="shop.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🎮 Games</h2>
+            </div>
+            <nav class="game-list">
+                <button class="game-item active" data-game="agma.io">
+                    <span class="game-icon">🔴</span>
+                    <span>Agma.io</span>
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="points-display">
+                    <span class="points-label">Your Points</span>
+                    <span class="points-value" id="userPoints">0</span>
+                </div>
+                <div id="userProfile" style="margin-top: 1rem; text-align: center; display: none;">
+                    <img id="userPicture" style="width: 50px; height: 50px; border-radius: 50%; margin-bottom: 0.5rem;">
+                    <p id="userName" style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem;"></p>
+                    <button id="logoutBtn" class="btn-logout">Logout</button>
+                </div>
+                <div id="loginPrompt" style="text-align: center;">
+                    <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1rem;">Sign in to redeem rewards</p>
+                    <a href="/auth/google" class="btn-oauth">
+                        <span>🔐</span> Sign in with YouTube
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header with Search -->
+            <header class="shop-header">
+                <div class="header-content">
+                    <h1>Rewards Shop</h1>
+                    <p class="subtitle">Redeem your earned points for exclusive rewards!</p>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="searchBar" placeholder="🔍 Search rewards..." class="search-bar">
+                </div>
+            </header>
+
+            <!-- Authentication Status -->
+            <div id="authAlert" style="display: none; margin-bottom: 2rem;">
+                <div class="alert-box" id="authAlertContent"></div>
+            </div>
+
+            <!-- Featured Items -->
+            <section class="section">
+                <div class="section-header">
+                    <h2>⭐ Featured Rewards</h2>
+                    <p>Top trending items this week</p>
+                </div>
+                <div class="items-grid" id="featuredItems"></div>
+            </section>
+
+            <!-- Categories -->
+            <section class="section">
+                <div class="section-header">
+                    <h2>🎁 All Rewards</h2>
+                </div>
+                
+                <!-- Powerups -->
+                <div class="category-section">
+                    <h3 class="category-title">⚡ Powerup Packs</h3>
+                    <div class="items-grid" id="powerupItems"></div>
+                </div>
+
+                <!-- Coins -->
+                <div class="category-section">
+                    <h3 class="category-title">💰 Coin Bundles</h3>
+                    <div class="items-grid" id="currencyItems"></div>
+                </div>
+
+                <!-- Bot Packs -->
+                <div class="category-section">
+                    <h3 class="category-title">🤖 Bot Packs</h3>
+                    <div class="items-grid" id="botItems"></div>
+                </div>
+
+                <!-- Membership -->
+                <div class="category-section">
+                    <h3 class="category-title">👑 Gold Membership</h3>
+                    <div class="items-grid" id="membershipItems"></div>
+                </div>
+
+                <!-- Priority Picks -->
+                <div class="category-section">
+                    <h3 class="category-title">🎛️ Stream Control</h3>
+                    <p class="category-description">Request exclusive stream events and control what I play!</p>
+                    <div class="items-grid" id="priorityItems"></div>
+                </div>
+
+                <!-- Points Boost -->
+                <div class="category-section">
+                    <h3 class="category-title">⚡ Point Boosters</h3>
+                    <p class="category-description">Accelerate your point earnings temporarily!</p>
+                    <div class="items-grid" id="boostItems"></div>
+                </div>
+            </section>
+
+            <!-- History Section -->
+            <section class="section">
+                <div class="section-header">
+                    <h2>📜 Your Redemption History</h2>
+                    <button id="refreshHistory" class="btn-secondary">Refresh</button>
+                </div>
+                <div id="historyContainer" class="history-list"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Redemption Modal -->
+    <div id="redeemModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Redeem Item</h2>
+            <div class="modal-body">
+                <div class="item-preview" id="modalItemPreview"></div>
+                
+                <div class="form-group" id="agmaGroup">
+                    <label for="agmaUsername">Agma.io Username*</label>
+                    <input type="text" id="agmaUsername" placeholder="Your Agma.io username">
+                </div>
+
+                <div class="form-group" id="quantityGroup">
+                    <label for="quantity">Quantity</label>
+                    <input type="number" id="quantity" value="1" min="1" max="100">
+                    <p class="total-cost">Total Cost: <span id="totalCost">0</span> points</p>
+                </div>
+
+                <div class="form-group" id="priorityGroup" style="display: none;">
+                    <label for="priorityServer">Choose Server*</label>
+                    <select id="priorityServer">
+                        <optgroup label="🇪🇺 Europe (EU)">
+                            <option value="EU | PopSplit Paradise">EU | PopSplit Paradise</option>
+                            <option value="EU | SlowSplit VirusFarm">EU | SlowSplit VirusFarm</option>
+                            <option value="EU | Instant">EU | Instant</option>
+                            <option value="EU | Crazy">EU | Crazy</option>
+                            <option value="EU | Gigantic">EU | Gigantic</option>
+                            <option value="EU | Gig 2 [128x]">EU | Gig 2 [128x]</option>
+                            <option value="EU | Gig 3 [No Pows]">EU | Gig 3 [No Pows]</option>
+                            <option value="EU | Gig 4 [XP Farm Portal]">EU | Gig 4 [XP Farm Portal]</option>
+                            <option value="EU | Supersonic/Minions">EU | Supersonic/Minions</option>
+                            <option value="EU | Battle Royale">EU | Battle Royale</option>
+                            <option value="EU | TEAM Selffeed Royale">EU | TEAM Selffeed Royale</option>
+                            <option value="EU | Selffeed EU">EU | Selffeed EU</option>
+                            <option value="EU | Selffeed On Redbull">EU | Selffeed On Redbull</option>
+                            <option value="EU | MegaSplit">EU | MegaSplit</option>
+                            <option value="EU | Infection (Beta)">EU | Infection (Beta)</option>
+                        </optgroup>
+                        
+                        <optgroup label="🇺🇸 North America (NA)">
+                            <option value="NA | Dodgeball">NA | Dodgeball</option>
+                            <option value="NA | FastSplit VirusFarm">NA | FastSplit VirusFarm</option>
+                            <option value="NA | Splitrun Paradise">NA | Splitrun Paradise</option>
+                            <option value="NA | X-Insta">NA | X-Insta</option>
+                            <option value="NA | XY-Insta">NA | XY-Insta</option>
+                            <option value="NA | Giant">NA | Giant</option>
+                            <option value="NA | Giant 2 [128x]">NA | Giant 2 [128x]</option>
+                            <option value="NA | Giant 3 [No Pows]">NA | Giant 3 [No Pows]</option>
+                            <option value="NA | Supersonic/Minions">NA | Supersonic/Minions</option>
+                            <option value="NA | Battle Royale">NA | Battle Royale</option>
+                            <option value="NA | Crazy">NA | Crazy</option>
+                            <option value="NA | Selffeed">NA | Selffeed</option>
+                            <option value="NA | Selffeed on Redbull">NA | Selffeed on Redbull</option>
+                            <option value="NA | Solo Selffeed Royale">NA | Solo Selffeed Royale</option>
+                            <option value="NA | SOLO Agf.io">NA | SOLO Agf.io</option>
+                            <option value="NA | Infection (Beta)">NA | Infection (Beta)</option>
+                        </optgroup>
+                        
+                        <optgroup label="🌏 Asia (AS)">
+                            <option value="AS | Battle Royale">AS | Battle Royale</option>
+                            <option value="AS | Crazy Asia">AS | Crazy Asia</option>
+                            <option value="AS | Giga">AS | Giga</option>
+                            <option value="AS | Giga 2 [No Pows]">AS | Giga 2 [No Pows]</option>
+                            <option value="AS | MegaSplit">AS | MegaSplit</option>
+                            <option value="AS | Selffeed">AS | Selffeed</option>
+                            <option value="AS | Instant">AS | Instant</option>
+                        </optgroup>
+                    </select>
+
+                    <label for="priorityAction" style="margin-top: 1rem;">Action Request*</label>
+                    <select id="priorityAction">
+                        <option value="">-- Select an action --</option>
+                        <option value="takeover">Server Takeover</option>
+                        <option value="1v1">1v1 Match</option>
+                        <option value="tournament">Tournament Style</option>
+                        <option value="custom">Custom Request</option>
+                    </select>
+
+                    <label for="priorityCustom" style="margin-top: 1rem;">Additional Details</label>
+                    <textarea id="priorityCustom" placeholder="Describe what you want to happen..." rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="redeemMessage">Message (Optional)</label>
+                    <textarea id="redeemMessage" placeholder="Leave a message to the streamer..." rows="3"></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button id="confirmRedeem" class="btn-primary btn-large">Confirm Redemption</button>
+                    <button id="cancelRedeem" class="btn-secondary btn-large">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="shop.js"></script>
+</body>
+</html>
