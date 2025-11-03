@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Rewards Shop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #6C5CE7;
+            --secondary-color: #00B894;
+            --danger-color: #FF6B6B;
+            --warning-color: #FDCB6E;
+            --dark-bg: #2D3436;
+            --darker-bg: #1E272E;
+            --card-bg: #353B48;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B2BEC3;
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .login-section {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .login-section input {
+            flex: 1;
+            max-width: 400px;
+            padding: 1rem;
+            background: var(--darker-bg);
+            border: 2px solid transparent;
+            border-radius: var(--border-radius);
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .login-section input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.4);
+        }
+
+        .btn-success {
+            background: var(--secondary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .btn-success:hover {
+            background: #019874;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .btn-danger:hover {
+            background: #ee5a52;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .content-section {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--darker-bg);
+            padding-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: 2px solid transparent;
+            border-radius: var(--border-radius);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--darker-bg);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.75rem;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .redemption-card {
+            background: var(--darker-bg);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .redemption-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.2);
+        }
+
+        .redemption-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .redemption-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .redemption-time {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .redemption-body {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item {
+            background: var(--card-bg);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .info-label {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-value {
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-weight: 600;
+            word-break: break-word;
+            line-height: 1.4;
+        }
+
+        .details-section {
+            background: var(--card-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .details-title {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .details-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .detail-item {
+            font-size: 0.9rem;
+        }
+
+        .detail-item strong {
+            color: var(--secondary-color);
+        }
+
+        .message-box {
+            background: var(--card-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--warning-color);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .message-box p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-size: 0.9rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons button {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-pending {
+            background: rgba(253, 203, 110, 0.2);
+            color: var(--warning-color);
+        }
+
+        .badge-approved {
+            background: rgba(0, 184, 148, 0.2);
+            color: var(--secondary-color);
+        }
+
+        .badge-rejected {
+            background: rgba(255, 107, 107, 0.2);
+            color: var(--danger-color);
+        }
+
+        .refresh-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.4);
+            transition: all 0.3s;
+        }
+
+        .refresh-btn:hover {
+            transform: scale(1.1) rotate(180deg);
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .redemption-body {
+                grid-template-columns: 1fr;
+            }
+
+            .details-content {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 Admin Panel</h1>
+            <a href="shop.html" style="color: var(--text-secondary); text-decoration: none; font-size: 0.95rem;">← Back to Shop</a>
+        </div>
+
+        <div class="login-section" id="loginSection">
+            <input type="password" id="adminPassword" placeholder="Enter admin password">
+            <button class="btn btn-primary" onclick="login()">Login</button>
+        </div>
+
+        <div class="content-section" id="adminContent">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="pendingCount">0</div>
+                    <div class="stat-label">Pending Redemptions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="approvedCount">0</div>
+                    <div class="stat-label">Approved</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="rejectedCount">0</div>
+                    <div class="stat-label">Rejected</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalValue">0</div>
+                    <div class="stat-label">Pending Points Value</div>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('pending')">📋 Pending</button>
+                <button class="tab-btn" onclick="switchTab('approved')">✅ Approved</button>
+                <button class="tab-btn" onclick="switchTab('rejected')">❌ Rejected</button>
+            </div>
+
+            <div id="pendingTab" class="tab-content active">
+                <div class="section-header">
+                    <h2>Pending Redemptions</h2>
+                    <button class="btn btn-primary" onclick="loadRedemptions()">Refresh</button>
+                </div>
+                <div id="pendingList"></div>
+            </div>
+
+            <div id="approvedTab" class="tab-content">
+                <div class="section-header">
+                    <h2>Approved Redemptions</h2>
+                    <button class="btn btn-primary" onclick="loadRedemptions()">Refresh</button>
+                </div>
+                <div id="approvedList"></div>
+            </div>
+
+            <div id="rejectedTab" class="tab-content">
+                <div class="section-header">
+                    <h2>Rejected Redemptions</h2>
+                    <button class="btn btn-primary" onclick="loadRedemptions()">Refresh</button>
+                </div>
+                <div id="rejectedList"></div>
+            </div>
+        </div>
+    </div>
+
+    <button class="refresh-btn" onclick="loadRedemptions()" title="Auto-refresh every 30s">↻</button>
+
+    <script>
+        let adminPassword = '';
+        let allRedemptions = [];
+
+        function switchTab(tab) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tab + 'Tab').classList.add('active');
+            event.target.classList.add('active');
+            
+            // Populate the tab
+            if (tab === 'pending') {
+                displayRedemptions(allRedemptions.filter(r => r.status === 'pending'), 'pendingList');
+            } else if (tab === 'approved') {
+                displayRedemptions(allRedemptions.filter(r => r.status === 'approved'), 'approvedList');
+            } else if (tab === 'rejected') {
+                displayRedemptions(allRedemptions.filter(r => r.status === 'rejected'), 'rejectedList');
+            }
+        }
+
+        function login() {
+            const password = document.getElementById('adminPassword').value;
+            if (!password) {
+                alert('Please enter password');
+                return;
+            }
+            
+            adminPassword = password;
+            loadRedemptions();
+        }
+
+        async function loadRedemptions() {
+            if (!adminPassword) {
+                alert('Please login first');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/admin/pending?password=${adminPassword}`);
+                
+                if (response.status === 401) {
+                    alert('Invalid password');
+                    adminPassword = '';
+                    document.getElementById('loginSection').style.display = 'flex';
+                    document.getElementById('adminContent').classList.remove('active');
+                    return;
+                }
+
+                const data = await response.json();
+                
+                allRedemptions = data;
+
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('adminContent').classList.add('active');
+
+                updateStats(data);
+                displayRedemptions(data.filter(r => r.status === 'pending'), 'pendingList');
+                displayRedemptions(data.filter(r => r.status === 'approved'), 'approvedList');
+                displayRedemptions(data.filter(r => r.status === 'rejected'), 'rejectedList');
+
+            } catch (err) {
+                console.error('Error loading redemptions:', err);
+                alert('Error loading redemptions');
+            }
+        }
+
+        function displayRedemptions(redemptions, containerId) {
+            const container = document.getElementById(containerId);
+
+            if (!redemptions || redemptions.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">✅</div>
+                        <h3>All caught up!</h3>
+                        <p>No redemptions to display</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = redemptions.map(item => {
+                const createdDate = new Date(item.created_at);
+                const isPriorityPick = item.item_id === 'priority-pick';
+                
+let priorityDetails = '';
+if (isPriorityPick) {
+    try {
+        const data = JSON.parse(item.message);
+        priorityDetails = `
+            <div class="details-section">
+                <div class="details-title">🎛️ Priority Pick Configuration</div>
+                <div class="details-content">
+                    <div class="detail-item"><strong>Server:</strong> ${data.server || 'Not selected'}</div>
+                    <div class="detail-item"><strong>Action:</strong> ${data.action || 'Not selected'}</div>
+                    ${data.custom ? `<div class="detail-item" style="grid-column: 1/-1;"><strong>Custom Details:</strong> ${data.custom}</div>` : ''}
+                </div>
+            </div>
+        `;
+    } catch (e) {
+        priorityDetails = `
+            <div class="details-section">
+                <div class="details-title">🎛️ Priority Pick Configuration</div>
+                <p style="color: var(--text-secondary);">Error parsing priority data</p>
+            </div>
+        `;
+    }
+}
+
+// Check for optional message (not the priority JSON)
+let messageDisplay = '';
+if (!isPriorityPick && item.message) {
+    messageDisplay = `
+        <div class="message-box">
+            <div class="info-label">💬 Viewer Message</div>
+            <p>${item.message}</p>
+        </div>
+    `;
+} else if (isPriorityPick) {
+    // For priority picks, also check if there's a custom message field
+    try {
+        const data = JSON.parse(item.message);
+        // Priority data is already in priorityDetails above
+    } catch (e) {}
+}
+
+
+                const showActions = item.status === 'pending';
+
+                return `
+                    <div class="redemption-card">
+                        <div class="redemption-header">
+                            <div>
+                                <div class="redemption-title">${item.item_name}</div>
+                                <div class="redemption-time">${createdDate.toLocaleString()}</div>
+                            </div>
+                            <span class="badge badge-${item.status}">${item.status.toUpperCase()}</span>
+                        </div>
+
+                        <div class="redemption-body">
+                            <div class="info-item">
+                                <div class="info-label">YouTube User</div>
+                                <div class="info-value">${item.username}</div>
+                            </div>
+                            ${item.agma_username ? `
+                                <div class="info-item">
+                                    <div class="info-label">Agma.io Username</div>
+                                    <div class="info-value">${item.agma_username}</div>
+                                </div>
+                            ` : ''}
+                            <div class="info-item">
+                                <div class="info-label">Quantity</div>
+                                <div class="info-value">${item.quantity}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Cost</div>
+                                <div class="info-value">${item.cost} points</div>
+                            </div>
+                        </div>
+
+                        ${priorityDetails}
+                        ${messageDisplay}
+
+                        ${showActions ? `
+                            <div class="action-buttons">
+                                <button class="btn btn-success" onclick="approveRedemption('${item.id}')">
+                                    ✓ Approve
+                                </button>
+                                <button class="btn btn-danger" onclick="rejectRedemption('${item.id}')">
+                                    ✗ Reject & Refund
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateStats(redemptions) {
+            const pending = redemptions.filter(r => r.status === 'pending');
+            const approved = redemptions.filter(r => r.status === 'approved');
+            const rejected = redemptions.filter(r => r.status === 'rejected');
+            const totalValue = pending.reduce((sum, item) => sum + item.cost, 0);
+            
+            document.getElementById('pendingCount').textContent = pending.length;
+            document.getElementById('approvedCount').textContent = approved.length;
+            document.getElementById('rejectedCount').textContent = rejected.length;
+            document.getElementById('totalValue').textContent = totalValue;
+        }
+
+        async function approveRedemption(redemptionId) {
+            if (!confirm('Approve this redemption?')) return;
+
+            try {
+                const response = await fetch('/api/admin/approve', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        password: adminPassword,
+                        redemptionId: redemptionId
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Redemption approved!');
+                    loadRedemptions();
+                } else {
+                    alert('Error approving redemption');
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                alert('Error approving redemption');
+            }
+        }
+
+        async function rejectRedemption(redemptionId) {
+            const reason = prompt('Reason for rejection (optional):');
+            if (reason === null) return;
+
+            try {
+                const response = await fetch('/api/admin/reject', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        password: adminPassword,
+                        redemptionId: redemptionId,
+                        reason: reason
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('❌ Redemption rejected and points refunded!');
+                    loadRedemptions();
+                } else {
+                    alert('Error rejecting redemption');
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                alert('Error rejecting redemption');
+            }
+        }
+
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            if (adminPassword) {
+                loadRedemptions();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>
